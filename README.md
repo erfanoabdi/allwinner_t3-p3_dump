@@ -1,0 +1,13 @@
+# t3_p3-eng 7.1.1 NMF27D 20180403 test-keys
+- manufacturer: allwinner
+- platform: t3
+- codename: t3-p3
+- flavor: t3_p3-eng
+- release: 7.1.1
+- id: NMF27D
+- incremental: 20180403
+- tags: test-keys
+- fingerprint: Allwinner/t3_p3/t3-p3:7.1.1/NMF27D/20180403:eng/test-keys
+- brand: Allwinner
+- branch: t3_p3-eng-7.1.1-NMF27D-20180403-test-keys
+- repo: allwinner_t3-p3_dump

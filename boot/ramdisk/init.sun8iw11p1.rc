@@ -1,0 +1,181 @@
+import init.common.rc
+import init.sun8iw11p1.usb.rc
+
+on init
+    # Set permissions for persist partition
+    mkdir /persist 0771 system system
+    mkdir /firmware 0771 system system
+
+    # Support legacy paths
+    symlink /storage/emulated/sdcard /mnt/sdcard
+    symlink /sdcard /storage/sdcard0
+
+    mkdir /oem 0550 system system
+
+on early-fs
+    mount_all /fstab.sun8iw11p1
+    swapon_all /fstab.sun8iw11p1
+#    restorecon_recursive /persist
+
+#    wait /dev/block/by-name/media_data
+#    mount vfat /dev/block/by-name/media_data /oem ro nosuid nodev utf8,context=u:object_r:oemfs:s0
+
+on fs
+	#secure storage
+# gpu
+    insmod /system/vendor/modules/mali.ko
+
+#gpio driver
+    insmod /system/vendor/modules/gpio-sunxi.ko
+
+# csi module
+#    insmod /system/vendor/modules/videobuf2-core.ko
+#    insmod /system/vendor/modules/videobuf2-memops.ko
+#    insmod /system/vendor/modules/videobuf2-dma-contig.ko
+#    insmod /system/vendor/modules/vfe_os.ko
+#    insmod /system/vendor/modules/vfe_subdev.ko
+#    insmod /system/vendor/modules/vfe_io.ko
+#    insmod /system/vendor/modules/vfe_v4l2.ko
+
+#insmod tp and keyboard gsensor 
+	insmod /system/vendor/modules/goodix_touch.ko
+
+#tvin      
+#    insmod  /system/vendor/modules/tvin.ko
+
+# insmod R2 module	
+    #insmod /system/vendor/modules/ttyxin.ko
+    #insmod /system/vendor/modules/usbnet.ko
+    #insmod /system/vendor/modules/cdc_ether.ko
+    #insmod /system/vendor/modules/xin_ncm.ko	
+#chipID
+    insmod  /system/vendor/modules/sunxi_eve.ko
+
+	insmod /system/vendor/modules/xradio_mac.ko
+	insmod /system/vendor/modules/xradio_core.ko
+	
+	
+on post-fs-data
+    mkdir /data/media 0770 media_rw media_rw
+    
+
+on boot
+    chmod 0777 /proc/driver/wifi-pm/power
+    write /sys/power/scene_lock "super_standby"
+# bluetooth
+#    mkdir /data/misc/bluedroid 770 bluetooth net_bt_stack
+
+    # power up/down interface
+    chmod 0660 /sys/class/rfkill/rfkill0/state
+    chmod 0660 /sys/class/rfkill/rfkill0/type
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/state
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/type
+    write /sys/class/rfkill/rfkill0/state 1
+
+    # bluetooth MAC address programming
+#    chown bluetooth net_bt_stack ro.bt.bdaddr_path
+#    chown bluetooth net_bt_stack /system/etc/bluetooth
+#    chown bluetooth net_bt_stack /data/misc/bluetooth
+#    setprop ro.bt.bdaddr_path "/data/misc/bluetooth/bdaddr"
+
+    # bluetooth LPM
+#    chmod 0220 /proc/bluetooth/sleep/lpm
+#    chmod 0220 /proc/bluetooth/sleep/btwrite
+#    chown bluetooth net_bt_stack /proc/bluetooth/sleep/lpm
+#    chown bluetooth net_bt_stack /proc/bluetooth/sleep/btwrite
+
+#wifi	
+chmod a+w /sys/devices/virtual/misc/sunxi-wlan/rf-ctrl/power_state
+chmod a+w /sys/devices/virtual/misc/sunxi-wlan/rf-ctrl/scan_device
+	
+service console /system/bin/sh
+    class core
+    console
+    disabled
+    user shell
+    group shell log
+
+
+# fusewrapped external sdcard daemon running as media_rw (1023)
+#service fuse_sdcard /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard /storage/sdcard
+#    class late_start
+#    disabled
+ 
+#service fuse_extsd /system/bin/sdcard -u 1023 -g 1023 -w 1023 -d /mnt/media_rw/extsd /storage/extsd
+#    class late_start
+     
+# ril related services
+#service ril-daemon /system/bin/rild -l libr2_t3-ril.so -- -d /dev/ttyVCOM0
+#       class main
+#       socket rild stream 660 root radio
+#       socket rild-debug stream 660 radio system
+#       user root
+#       group radio cache inet misc audio sdcard_rw log
+#       oneshot
+
+service ril-daemon /system/bin/rild
+    class main
+    socket rild stream 660 root radio
+    socket sap_uim_socket1 stream 660 bluetooth bluetooth
+    socket rild-debug stream 660 radio system
+    user root
+    group radio cache inet misc audio log
+
+# xr819 wpa_supplicant
+service wpa_supplicant /system/bin/wpa_supplicant \
+    -Dnl80211 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf \
+    -O/data/misc/wifi/sockets \
+    -g@android:wpa_wlan0
+    class main
+    socket wpa_wlan0 dgram 660 wifi wifi
+    disabled
+    oneshot
+	
+service dhcpcd_lte0 /system/bin/dhcpcd -ABKL
+    class main
+    disabled
+    oneshot
+    
+service iprenew_lte0 /system/bin/dhcpcd -n
+    class main
+    disabled
+    oneshot
+
+# xr819 p2p	
+service p2p_supplicant /system/bin/wpa_supplicant \
+    -Dnl80211 -ip2p0 -c/data/misc/wifi/p2p_supplicant.conf -N \
+    -Dnl80211 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf \
+    -O/data/misc/wifi/sockets \
+    -g@android:wpa_wlan0
+    class main
+    socket wpa_wlan0 dgram 660 wifi wifi
+    group wifi
+    disabled
+    oneshot
+
+service usbmuxd /system/bin/usbmuxd
+    class main
+    user root
+    group root
+    disabled
+    oneshot
+
+service vil-daemon /system/bin/vild
+    class main
+    socket vild stream 666 root root
+    socket vild-debug stream 660 radio system
+    user root
+    group radio cache inet misc audio sdcard_rw log
+    oneshot
+
+service gocsdk /system/bin/gocsdk /dev/ttyS3 500000
+    class main
+    user root
+    group root
+    oneshot
+
+#CarPlay
+service z-link /system/bin/z-link.sh
+    class main
+    oneshot
+
