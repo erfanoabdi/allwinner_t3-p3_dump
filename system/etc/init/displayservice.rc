@@ -1,0 +1,5 @@
+service displayservice /system/bin/displayservice
+    class core
+    user system
+    group graphics audio
+    writepid /dev/stune/foreground/tasks

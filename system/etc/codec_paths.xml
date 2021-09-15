@@ -1,0 +1,81 @@
+<mixer>
+  <!-- These are the initial mixer settings -->
+  <ctl name="Headphone Switch" value="0" />
+
+  <!-- These are commonly used control sequences -->
+  <path name="media-headphones">
+    <ctl name="Right Output Mixer DACR Switch" value="1" />
+	<ctl name="Left Output Mixer DACL Switch" value="1" />
+	<ctl name="HP_R Mux" value="OMIX" />
+	<ctl name="HP_L Mux" value="OMIX" />
+	<ctl name="Headphone Switch" value="1" />
+  </path>
+
+  <path name="media-headphones-close">
+    <ctl name="Right Output Mixer DACR Switch" value="0" />
+	<ctl name="Left Output Mixer DACL Switch" value="0" />
+	<ctl name="Headphone Switch" value="0" />
+  </path>
+
+  <path name="media-headset">
+    <ctl name="Phone Out Mixer LOMIX Switch" value="1" />
+	<ctl name="Phone Out Mixer ROMIX Switch" value="1" />
+	<ctl name="Right Output Mixer DACR Switch" value="1" />
+	<ctl name="Left Output Mixer DACL Switch" value="1" />
+	<ctl name="Phoneout Speaker Switch" value="1" />
+  </path>
+
+  <path name="media-headset-close">
+    <ctl name="Phone Out Mixer LOMIX Switch" value="0" />
+	<ctl name="Phone Out Mixer ROMIX Switch" value="0" />
+	<ctl name="Right Output Mixer DACR Switch" value="0" />
+	<ctl name="Left Output Mixer DACL Switch" value="0" />
+	<ctl name="Phoneout Speaker Switch" value="0" />
+  </path>
+
+  <!-- for T3, mic1 Left + mic2 Right  -->
+  <path name="media-main-mic">
+   <ctl name="Right Input Mixer ROMIX Switch" value="1" />
+   <ctl name="Left Input Mixer MIC1 Boost Switch" value="1" />
+   <ctl name="Right Input Mixer MIC2 Boost Switch" value="1" />
+  </path>
+
+  <path name="media-main-mic-close">
+   <ctl name="Right Input Mixer ROMIX Switch" value="0" />
+   <ctl name="Left Input Mixer MIC1 Boost Switch" value="0" />
+   <ctl name="Right Input Mixer MIC2 Boost Switch" value="0" />
+  </path>
+  
+  <path name="media-fmin">
+   <ctl name="Left Input Mixer FML Switch" value="1" />
+   <ctl name="Right Input Mixer FMR Switch" value="1" />
+  </path>
+
+  <path name="media-fmin-close">
+   <ctl name="Left Input Mixer FML Switch" value="0" />
+   <ctl name="Right Input Mixer FMR Switch" value="0" />
+  </path>
+
+  <path name="media-headset-mic">
+   <ctl name="Left Input Mixer MIC2 Boost Switch" value="1" />
+   <ctl name="Right Input Mixer MIC2 Boost Switch" value="1" />
+  </path>
+
+  <path name="media-headset-mic-close">
+   <ctl name="Left Input Mixer MIC2 Boost Switch" value="0" />
+   <ctl name="Right Input Mixer MIC2 Boost Switch" value="0" />
+  </path>
+
+  <path name="media-linein">
+   <ctl name="Left Input Mixer LINEINL Switch" value="1" />
+   <ctl name="Right Input Mixer LINEINR Switch" value="1" />
+  </path>
+
+  <path name="media-linein-close">
+   <ctl name="Left Input Mixer LINEINL Switch" value="0" />
+   <ctl name="Right Input Mixer LINEINR Switch" value="0" />
+  </path>
+
+  <path name="null">
+  </path>
+</mixer>
